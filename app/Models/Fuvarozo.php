@@ -6,11 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;  // ✅ HELYES IMPORT!
 
-class User extends Authenticatable
+class Fuvarozo extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +45,34 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function jarmu()
+    {
+        return $this->hasOne(Jarmu::class, 'fuvarozo_id');
+    }
+
+    /**
+     * Kapcsolat a munkákhoz (egy fuvarozónak több munkája lehet)
+     */
+    public function munkak()
+    {
+        return $this->hasMany(Munka::class, 'fuvarozo_id');
+    }
+
+    /**
+     * Helper függvény: admin-e?
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Helper függvény: fuvarozó-e?
+     */
+    public function isFuvarozo()
+    {
+        return $this->role === 'fuvarozo';
     }
 }

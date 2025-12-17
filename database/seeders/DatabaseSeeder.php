@@ -2,24 +2,67 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Fuvarozo;
+use App\Models\Munka;
+use App\Models\Jarmu;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Először töröljük a meglévő adatokat (ha vannak)
+        Munka::truncate();
+        Jarmu::truncate();
+        Fuvarozo::where('email', '!=', '')->delete();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // 1. Admin létrehozása
+        $admin = Fuvarozo::create([
+            'name' => 'Admin Főnök',
+            'email' => 'admin@fuvar.test',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin',
+            'email_verified_at' => now(),
         ]);
+
+        // 2. 5 fuvarozó létrehozása
+        $fuvarozok = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $fuvarozok[] = Fuvarozo::create([
+                'name' => 'Fuvarozó ' . $i,
+                'email' => 'fuvarozo' . $i . '@fuvar.test',
+                'password' => Hash::make('password'),
+                'role' => 'fuvarozo',
+                'email_verified_at' => now(),
+            ]);
+        }
+
+        // 3. Járművek létrehozása
+        foreach ($fuvarozok as $fuvarozo) {
+            Jarmu::create([
+                'marka' => ['Mercedes', 'Volvo', 'Scania', 'MAN'][array_rand(['Mercedes', 'Volvo', 'Scania', 'MAN'])],
+                'tipus' => 'Típus-' . rand(100, 999),
+                'rendszam' => 'ABC-' . rand(100, 999),
+                'fuvarozo_id' => $fuvarozo->id,
+            ]);
+        }
+
+        // 4. 15 munka létrehozása
+        $statuszok = ['kiosztva', 'folyamatban', 'elvegezve', 'sikertelen'];
+        for ($i = 1; $i <= 15; $i++) {
+            Munka::create([
+                'kiindulo_cim' => 'Budapest, Király utca ' . rand(1, 100),
+                'erkezesi_cim' => 'Debrecen, Piac utca ' . rand(1, 100),
+                'cimzett_nev' => 'Ügyfél ' . $i,
+                'cimzett_telefon' => '+36' . rand(20, 99) . rand(1000000, 9999999),
+                'statusz' => $statuszok[array_rand($statuszok)],
+                'fuvarozo_id' => rand(0, 1) ? $fuvarozok[array_rand($fuvarozok)]->id : null,
+            ]);
+        }
+
+        echo "Seeding completed!\n";
+        echo "- Admin: admin@fuvar.test / admin123\n";
+        echo "- Fuvarozók: fuvarozo1@fuvar.test ... fuvarozo5@fuvar.test / password\n";
     }
 }
