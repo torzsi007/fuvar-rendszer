@@ -69,21 +69,21 @@ class MunkaApiController extends Controller
 
         return response()->json(['message' => 'Munka sikeresen törölve'], 200);
     }
-}
 
     // Státusz frissítés (fuvarozók számára)
     public function updateStatus(Request $request, Munka $munka)
     {
-        // Ellenőrizzük, hogy a fuvarozó saját munkáját módosítja-e
+        // Ellenőrizés, hogy a fuvarozó saját munkáját módosítja-e
         if ($munka->fuvarozo_id !== $request->user()->id) {
             return response()->json(['error' => 'Nincs jogosultságod módosítani ezt a munkát!'], 403);
         }
-        
+
         $validated = $request->validate([
             'statusz' => 'required|in:kiosztva,folyamatban,elvegezve,sikertelen'
         ]);
-        
+
         $munka->update($validated);
-        
-        return new \App\Http\Resources\MunkaResource($munka);
+
+        return new MunkaResource($munka);
     }
+}

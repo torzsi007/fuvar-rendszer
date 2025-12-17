@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // ADD HOZZÁ EZT A SORT:
+
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);

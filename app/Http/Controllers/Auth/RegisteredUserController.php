@@ -39,13 +39,10 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'fuvarozo', // Minden új felhasználó fuvarozó
+            'role' => 'fuvarozo',
         ]);
 
         event(new Registered($user));
-
-        // ⚠️ FONTOS: NEM jelentkeztetjük be automatikusan!
-        // Auth::login($user); // EZT NE HASZNÁLDUK!
 
         return redirect('/login')->with('status', 'Sikeres regisztráció! Most már bejelentkezhetsz.');
     }

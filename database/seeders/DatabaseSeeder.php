@@ -12,12 +12,11 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Először töröljük a meglévő adatokat (ha vannak)
         Munka::truncate();
         Jarmu::truncate();
         Fuvarozo::where('email', '!=', '')->delete();
 
-        // 1. Admin létrehozása
+        //  Admin létrehozása
         $admin = Fuvarozo::create([
             'name' => 'Admin Főnök',
             'email' => 'admin@fuvar.test',
@@ -26,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // 2. 5 fuvarozó létrehozása
+        // 5 fuvarozó létrehozása
         $fuvarozok = [];
         for ($i = 1; $i <= 5; $i++) {
             $fuvarozok[] = Fuvarozo::create([
@@ -38,7 +37,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 3. Járművek létrehozása
+        // Járművek létrehozása
         foreach ($fuvarozok as $fuvarozo) {
             Jarmu::create([
                 'marka' => ['Mercedes', 'Volvo', 'Scania', 'MAN'][array_rand(['Mercedes', 'Volvo', 'Scania', 'MAN'])],
@@ -48,7 +47,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 4. 15 munka létrehozása
+        // 15 munka létrehozása
         $statuszok = ['kiosztva', 'folyamatban', 'elvegezve', 'sikertelen'];
         for ($i = 1; $i <= 15; $i++) {
             Munka::create([

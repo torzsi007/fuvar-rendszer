@@ -19,7 +19,7 @@ class DashboardController extends Controller
 
     public function updateStatus(Request $request, Munka $munka)
     {
-        // Ellenőrizzük, hogy a fuvarozó saját munkáját módosítja-e
+        // Ellenőrizés, hogy a fuvarozó saját munkáját módosítja-e
         if ($munka->fuvarozo_id !== auth()->id()) {
             abort(403, 'Nincs jogosultságod módosítani ezt a munkát!');
         }

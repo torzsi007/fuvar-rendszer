@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MunkaApiController;
+use App\Http\Controllers\Api\AuthController;
 use App\Models\Fuvarozo;
 
 /*
@@ -18,7 +20,10 @@ Route::get('/', function () {
         'endpoints' => [
             'GET /api' => 'API információ',
             'POST /api/login' => 'Bejelentkezés',
-            'GET /api/munkak' => 'Munkák listája (GET)',
+            'POST /api/logout' => 'Kijelentkezés',
+            'GET /api/munkak' => 'Munkák listája',
+            'GET /api/munkak/{id}' => 'Munka részletei',
+            'PUT /api/munkak/{id}/statusz' => 'Munka státuszának frissítése',
         ]
     ]);
 });
@@ -70,4 +75,31 @@ Route::get('/munkak', function () {
         'count' => $munkak->count(),
         'munkak' => $munkak
     ]);
+});
+
+// Hitelesített API route-ok
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Kijelentkezés
+    Route::post('/logout', function (Request $request) {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Sikeres kijelentkezés'
+        ]);
+    });
+
+    // Munka resource route-ok
+    Route::apiResource('munkak', MunkaApiController::class);
+
+    // Státusz frissítés külön endpoint
+    Route::put('/munkak/{munka}/statusz', [MunkaApiController::class, 'updateStatus']);
+
+    // User információk
+    Route::get('/user', function (Request $request) {
+        return response()->json([
+            'user' => $request->user(),
+            'jarmu' => $request->user()->jarmu
+        ]);
+    });
 });
