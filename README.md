@@ -64,7 +64,7 @@ Nincs kulcs
 bash
 php artisan key:generate
 Feladat ellenőrzés
-✅ Kötelező (mind kész):
+Kötelező (mind kész):
 
 Laravel 10
 
@@ -82,7 +82,7 @@ Authentication
 
 GitHub repository
 
-✅ Bónusz (mind kész):
+Bónusz (mind kész):
 
 Státusz szűrés
 
